@@ -7,16 +7,16 @@ logger = logging.getLogger(__name__)
 
 # define deployment behaviour based on supplied app spec
 def deploy() -> None:
-    from smart_contracts.artifacts.hello_world.hello_world_client import (
-        HelloArgs,
-        HelloWorldFactory,
+    from smart_contracts.artifacts.personal_bank.personal_bank_client import (
+        DepositArgs,
+        PersonalBankFactory,
     )
 
     algorand = algokit_utils.AlgorandClient.from_environment()
     deployer_ = algorand.account.from_environment("DEPLOYER")
 
     factory = algorand.client.get_typed_app_factory(
-        HelloWorldFactory, default_sender=deployer_.address
+        PersonalBankFactory, default_sender=deployer_.address
     )
 
     app_client, result = factory.deploy(
@@ -35,10 +35,3 @@ def deploy() -> None:
                 receiver=app_client.app_address,
             )
         )
-
-    name = "world"
-    response = app_client.send.hello(args=HelloArgs(name=name))
-    logger.info(
-        f"Called hello on {app_client.app_name} ({app_client.app_id}) "
-        f"with name={name}, received: {response.abi_return}"
-    )
